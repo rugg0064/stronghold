@@ -2,10 +2,11 @@
 using System;
 using System.Linq;
 
-namespace MinimalExample
+namespace Stronghold
 {
-	partial class MinimalPlayer : Player
+	partial class Player : Sandbox.Player
 	{
+		private ModelEntity ent;
 		public override void Respawn()
 		{
 			SetModel( "models/citizen/citizen.vmdl" );
@@ -58,6 +59,37 @@ namespace MinimalExample
 				ragdoll.SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
 				ragdoll.PhysicsGroup.Velocity = EyeRot.Forward * 1000;
 			}
+
+			if(Input.Pressed( InputButton.Attack2) )
+			{
+				ent = new ModelEntity( "addons/citizen/models/citizen_props/crate01.vmdl" );
+				ent.RenderAlpha = 0.5f;
+			}
+			
+			TraceResult tr = Trace.Ray( EyePos, EyePos + EyeRot.Forward * 200 ).Ignore( this ).Run();
+			if(IsClient && Input.Down( InputButton.Attack2) && ent != null && ent.IsValid())
+			{
+				ent.Position = tr.EndPos;
+			}
+			
+			if(Input.Released( InputButton.Attack2) )
+			{
+				Log.Info( "spawn" );
+				if(ent != null && ent.IsValid())
+				{
+					ent.Delete();
+				}
+				if(IsServer)
+				{
+					Prop p = new Prop();
+					p.SetModel( "addons/citizen/models/citizen_props/crate01.vmdl" );
+					p.Position = tr.EndPos;
+					p.Spawn();
+					p.SetupPhysicsFromModel( PhysicsMotionType.Static, false );
+				}
+			}
+
+			
 		}
 
 		public override void OnKilled()

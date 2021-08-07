@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
 //
-namespace MinimalExample
+namespace Stronghold
 {
 
 	/// <summary>
@@ -18,9 +18,9 @@ namespace MinimalExample
 	/// You can use this to create things like HUDs and declare which player class
 	/// to use for spawned players.
 	/// </summary>
-	public partial class MinimalGame : Sandbox.Game
+	public partial class Game : Sandbox.Game
 	{
-		public MinimalGame()
+		public Game()
 		{
 			if ( IsServer )
 			{
@@ -30,7 +30,7 @@ namespace MinimalExample
 				// and when it is created clientside it creates the actual
 				// UI panels. You don't have to create your HUD via an entity,
 				// this just feels like a nice neat way to do it.
-				new MinimalHudEntity();
+				new Hud();
 			}
 
 			if ( IsClient )
@@ -46,7 +46,7 @@ namespace MinimalExample
 		{
 			base.ClientJoined( client );
 
-			var player = new MinimalPlayer();
+			var player = new Player();
 			client.Pawn = player;
 
 			player.Respawn();
